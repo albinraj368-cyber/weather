@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: url(https://png.pngtree.com/background/20210711/original/pngtree-hand-drawn-blue-sky-white-clouds-weather-forecast-illustration-background-picture-image_1137685.jpg) no-repeat center/cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .weather-app {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      border-radius: 20px;
+      width: 280px;
+      text-align: center;
+      box-shadow: 0px 8px 25px rgba(0,0,0,0.2);
+      color: #000;
+    }
+
+    .search {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .search input {
+      padding: 8px;
+      border: none;
+      outline: none;
+      border-radius: 10px 0 0 10px;
+      width: 70%;
+    }
+
+    .search button {
+      padding: 8px 12px;
+      border: none;
+      background: #2196f3;
+      color: white;
+      border-radius: 0 10px 10px 0;
+      cursor: pointer;
+    }
+
+    .icon {
+      font-size: 50px;
+      margin: 10px 0;
+    }
+
+    .temp {
+      font-size: 40px;
+      font-weight: bold;
+    }
+
+    .desc {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .details {
+      display: flex;
+      justify-content: space-around;
+      font-size: 14px;
+    }
+
+    .details div {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="weather-app">
+    <div class="search">
+      <input type="text" id="city" placeholder="Enter city">
+      <button onclick="getWeather()">🔍</button>
+    </div>
+    <div class="icon">🌤️</div>
+    <div class="temp" id="temperature"></div>
+    <div class="desc" id="description"></div>
+    <div class="details">
+      <div>
+        <p>💧</p>
+        <p id="humidity"></p>
+      </div>
+      <div>
+        <p>🌬️</p>
+        <p id="wind"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const city = document.getElementById("city").value;
+      
+      if (!city) {
+        alert("Please enter a city name");
+        return;
+      }
+
+      const apiKey = "5b4bee0ba241d092159faf007e166080"; 
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.cod !== 200) {
+          alert("City not found!");
+          return;
+        }
+
+        document.getElementById("temperature").innerText = data.main.temp + "°C";
+        document.getElementById("description").innerText = data.weather[0].description;
+        document.getElementById("humidity").innerText = data.main.humidity + "%";
+        document.getElementById("wind").innerText = data.wind.speed + " Km/h";
+
+        const weather = data.weather[0].main.toLowerCase();
+        const iconDiv = document.querySelector(".icon");
+
+        if (weather.includes("cloud")) iconDiv.innerText = "☁️";
+        else if (weather.includes("rain")) iconDiv.innerText = "🌧️";
+        else if (weather.includes("clear")) iconDiv.innerText = "☀️";
+        else if (weather.includes("mist")) iconDiv.innerText = "🌫️";
+        else iconDiv.innerText = "🌤️";
+
+      } catch (error) {
+        alert("Error fetching weather data");
+      }
+    }
+  </script>
+
+</body>
+</html>
